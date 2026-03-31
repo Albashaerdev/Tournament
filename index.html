@@ -1,93 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="dark" lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ethereal Arena | Tournament Hub</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-surface": "#f2effb",
+            "primary": "#ba9eff",
+            "primary-dim": "#8455ef",
+            "surface-container": "#191923",
+            "surface-container-high": "#252531",
+            "secondary": "#9093ff",
+            "tertiary": "#ff6daf",
+            "on-surface-variant": "#acaab5",
+            "error": "#ff6e84",
+            "error-dim": "#d73357",
+            "outline-variant": "#484751",
+            "background": "#0d0d16",
+          },
+          fontFamily: {
+            "headline": ["Inter"],
+            "body": ["Inter"],
+          },
+          borderRadius: { "xl": "0.5rem", "full": "0.75rem" },
+        },
+      },
+    }
+  </script>
   <style>
-    * { font-family: 'Inter', sans-serif; }
-    body { background: #0a0a12; overflow-x: hidden; }
-    @keyframes fadeSlideUp { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
-    .animate-fade-slide { animation: fadeSlideUp 0.4s ease forwards; }
-    .glass-card {
-      background: rgba(15, 15, 25, 0.75);
+    body {
+      background: radial-gradient(circle at 50% 0%, #16162d 0%, #0d0d16 100%);
+      font-family: 'Inter', sans-serif;
+    }
+    .glass-panel {
+      background: rgba(25, 25, 35, 0.4);
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(99, 102, 241, 0.25);
-      border-radius: 1.5rem;
-      transition: all 0.25s ease;
+      border: 1px solid rgba(186, 158, 255, 0.1);
+      box-shadow: inset 0 1px 1px rgba(172, 170, 181, 0.05);
     }
-    .glass-card:hover {
-      border-color: rgba(139, 92, 246, 0.6);
-      box-shadow: 0 12px 25px -12px rgba(139, 92, 246, 0.3);
+    .hero-card-glow:hover {
+      box-shadow: 0 0 30px rgba(132, 85, 239, 0.15);
+      border-color: rgba(186, 158, 255, 0.3);
     }
-    .sidebar-item {
-      transition: all 0.2s ease;
-      cursor: pointer;
-      border-radius: 1rem;
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
     }
-    .sidebar-item:hover { background: rgba(139, 92, 246, 0.2); transform: translateX(4px); }
-    .active-sidebar-item { background: rgba(99, 102, 241, 0.25); border-left: 3px solid #a855f7; color: white; font-weight: 500; }
-    input, select, textarea { background: #12121c; border: 1px solid #2d2d3c; transition: all 0.2s; }
-    input:focus, select:focus, textarea:focus { outline: none; border-color: #8b5cf6; box-shadow: 0 0 0 2px rgba(139,92,246,0.3); }
-    button { transition: all 0.2s ease; cursor: pointer; }
-    button:active { transform: scale(0.97); }
-    .hidden-view { display: none; }
-    .badge-update {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(8px);
-      padding: 6px 12px;
-      border-radius: 40px;
-      font-size: 12px;
-      color: #a855f7;
-      border: 1px solid #a855f7;
-      z-index: 1000;
-      cursor: pointer;
-      transition: 0.2s;
+    .active-nav-glow {
+      text-shadow: 0 0 8px rgba(186, 158, 255, 0.5);
     }
-    .badge-update:hover { background: rgba(168,85,247,0.2); transform: scale(1.05); }
-    .error-message { color: #f87171; font-size: 0.75rem; margin-top: 0.25rem; text-align: center; }
+    .leaderboard-tab-active {
+      background: rgba(186, 158, 255, 0.2);
+      border-bottom: 2px solid #ba9eff;
+      color: white;
+    }
+    .leaderboard-table th, .leaderboard-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid rgba(186, 158, 255, 0.1);
+    }
+    .leaderboard-table tr:hover {
+      background: rgba(186, 158, 255, 0.05);
+    }
   </style>
 </head>
-<body class="text-gray-200">
+<body class="bg-background text-on-surface min-h-screen selection:bg-primary/30">
 
   <!-- AUTH MODAL -->
-  <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md transition-all duration-500">
-    <div class="w-full max-w-5xl mx-4 glass-card p-6 md:p-10 shadow-2xl">
+  <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md transition-all duration-500">
+    <div class="w-full max-w-5xl mx-4 glass-panel rounded-2xl p-6 md:p-10 border border-primary/20 shadow-2xl">
       <div class="flex flex-col md:flex-row gap-8 items-center">
         <div class="flex-1 text-center md:text-left space-y-4">
-          <div class="text-4xl font-black bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">ETHEREALARENA</div>
+          <div class="text-4xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">ETHEREALARENA</div>
           <div class="text-2xl md:text-3xl font-bold leading-tight">Claim Your Throne<br>in the Ethereal League</div>
-          <p class="text-indigo-200/70 text-sm max-w-md">Rule the arena, conquer leaderboards, and rise among legends.</p>
+          <p class="text-on-surface-variant text-sm max-w-md">Rule the arena, conquer leaderboards, and rise among legends.</p>
           <div class="flex gap-3 justify-center md:justify-start pt-2">
-            <span class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-semibold">ACADEMY</span>
-            <span class="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold">ARENA</span>
-            <span class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-semibold">TOURNAMENTS</span>
+            <span class="px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-semibold">ACADEMY</span>
+            <span class="px-3 py-1 rounded-full bg-secondary/20 text-secondary text-xs font-semibold">ARENA</span>
+            <span class="px-3 py-1 rounded-full bg-tertiary/20 text-tertiary text-xs font-semibold">TOURNAMENTS</span>
           </div>
         </div>
-        <div class="flex-1 w-full max-w-md mx-auto bg-[#0f0f1a] rounded-2xl p-6 border border-white/10">
-          <div class="flex gap-2 mb-6 border-b border-gray-700 pb-2">
-            <button id="authLoginTabBtn" class="tab-auth-btn px-4 py-1 text-sm font-semibold text-indigo-300 border-b-2 border-indigo-500">Login</button>
-            <button id="authSignupTabBtn" class="tab-auth-btn px-4 py-1 text-sm font-semibold text-gray-400">Sign Up</button>
+        <div class="flex-1 w-full max-w-md mx-auto bg-surface-container rounded-2xl p-6 border border-outline-variant/20">
+          <div class="flex gap-2 mb-6 border-b border-outline-variant/20 pb-2">
+            <button id="authLoginTabBtn" class="tab-auth-btn px-4 py-1 text-sm font-semibold text-primary border-b-2 border-primary">Login</button>
+            <button id="authSignupTabBtn" class="tab-auth-btn px-4 py-1 text-sm font-semibold text-on-surface-variant">Sign Up</button>
           </div>
           <div id="loginFormPanel" class="auth-form-panel space-y-4">
-            <input type="text" id="loginUsername" placeholder="Username" class="w-full p-3 rounded-xl bg-[#1a1a28] border-none text-white">
-            <input type="password" id="loginPassword" placeholder="Password" class="w-full p-3 rounded-xl bg-[#1a1a28] border-none">
-            <div id="loginError" class="error-message"></div>
-            <button id="doLoginBtn" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 py-3 rounded-xl font-bold hover:shadow-lg">Enter Arena →</button>
+            <input type="text" id="loginUsername" placeholder="Username" class="w-full p-3 rounded-xl bg-surface-container-high border-none text-white focus:ring-primary">
+            <input type="password" id="loginPassword" placeholder="Password" class="w-full p-3 rounded-xl bg-surface-container-high border-none text-white">
+            <div id="loginError" class="error-message text-error text-xs text-center"></div>
+            <button id="doLoginBtn" class="w-full bg-gradient-to-r from-primary to-primary-dim py-3 rounded-xl font-bold hover:shadow-lg transition-transform active:scale-95">Enter Arena →</button>
           </div>
           <div id="signupFormPanel" class="auth-form-panel hidden space-y-4">
-            <input type="text" id="signupUsername" placeholder="Username" class="w-full p-3 rounded-xl bg-[#1a1a28]">
-            <input type="text" id="signupName" placeholder="Full Name" class="w-full p-3 rounded-xl bg-[#1a1a28]">
-            <input type="password" id="signupPassword" placeholder="Password" class="w-full p-3 rounded-xl bg-[#1a1a28]">
-            <input type="password" id="signupConfirmPassword" placeholder="Confirm Password" class="w-full p-3 rounded-xl bg-[#1a1a28]">
-            <div id="signupError" class="error-message"></div>
-            <button id="doSignupBtn" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 py-3 rounded-xl font-bold">Claim Throne</button>
+            <input type="text" id="signupUsername" placeholder="Username" class="w-full p-3 rounded-xl bg-surface-container-high">
+            <input type="text" id="signupName" placeholder="Full Name" class="w-full p-3 rounded-xl bg-surface-container-high">
+            <input type="password" id="signupPassword" placeholder="Password" class="w-full p-3 rounded-xl bg-surface-container-high">
+            <input type="password" id="signupConfirmPassword" placeholder="Confirm Password" class="w-full p-3 rounded-xl bg-surface-container-high">
+            <div id="signupError" class="error-message text-error text-xs text-center"></div>
+            <button id="doSignupBtn" class="w-full bg-gradient-to-r from-primary to-tertiary py-3 rounded-xl font-bold">Claim Throne</button>
           </div>
         </div>
       </div>
@@ -95,96 +111,85 @@
   </div>
 
   <!-- MAIN APP -->
-  <div id="mainApp" class="hidden min-h-screen bg-[#07070f]">
-    <div class="flex flex-col md:flex-row">
-      <!-- SIDEBAR -->
-      <aside class="w-full md:w-80 bg-[#0b0b12] border-r border-white/10 p-5 md:min-h-screen flex flex-col gap-6">
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600"></div>
-          <span class="text-2xl font-extrabold bg-gradient-to-r from-indigo-300 to-purple-300 bg-clip-text text-transparent">ETHEREAL</span>
-        </div>
-        <div class="flex flex-col gap-1">
-          <div data-view="home" class="sidebar-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-300"><i class="fas fa-tachometer-alt w-5"></i><span>Dashboard</span></div>
-          <div data-view="leaderboard" class="sidebar-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-300"><i class="fas fa-chart-line w-5"></i><span>Leaderboards</span></div>
-          <div data-view="users" class="sidebar-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-300"><i class="fas fa-users w-5"></i><span>Users</span></div>
-          <div data-view="admin" id="adminNavItem" class="sidebar-item hidden flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-300"><i class="fas fa-shield-alt w-5"></i><span>Admin Panel</span></div>
-          <div data-view="settings" class="sidebar-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-300"><i class="fas fa-cog w-5"></i><span>Settings</span></div>
-          <div data-view="rules" class="sidebar-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-300"><i class="fas fa-book w-5"></i><span>Rules</span></div>
-          <div data-view="events" class="sidebar-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-300"><i class="fas fa-calendar-alt w-5"></i><span>Events</span></div>
-        </div>
-        <div class="mt-auto pt-8 border-t border-white/10">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-500 flex items-center justify-center font-bold" id="userAvatar">U</div>
-            <div><div class="font-semibold" id="sidebarUserName">Loading...</div><div class="text-xs text-gray-400" id="userRoleBadge"></div></div>
+  <div id="mainApp" class="hidden">
+    <aside class="h-screen w-64 fixed left-0 top-0 bg-[#0d0d16] flex flex-col h-full py-8 px-4 z-50 border-r border-outline-variant/10">
+      <div class="mb-10 px-4">
+        <h1 class="text-indigo-400 font-extrabold text-xl tracking-tighter">ETHEREAL</h1>
+        <p class="font-inter font-semibold uppercase tracking-widest text-[10px] text-slate-500">Tournament Hub</p>
+      </div>
+      <nav class="flex-1 space-y-1">
+        <a data-view="home" class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-white/5 hover:text-indigo-200 transition-all duration-300 group" href="#">
+          <span class="material-symbols-outlined group-hover:scale-110 transition-transform">dashboard</span>
+          <span class="font-inter font-semibold uppercase tracking-widest text-[10px]">Dashboard</span>
+        </a>
+        <a data-view="leaderboard" class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-white/5 hover:text-indigo-200 transition-all duration-300 group" href="#">
+          <span class="material-symbols-outlined group-hover:scale-110 transition-transform">leaderboard</span>
+          <span class="font-inter font-semibold uppercase tracking-widest text-[10px]">Leaderboards</span>
+        </a>
+        <a data-view="teams" class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-white/5 hover:text-indigo-200 transition-all duration-300 group" href="#">
+          <span class="material-symbols-outlined group-hover:scale-110 transition-transform">groups</span>
+          <span class="font-inter font-semibold uppercase tracking-widest text-[10px]">Teams</span>
+        </a>
+        <a data-view="users" class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-white/5 hover:text-indigo-200 transition-all duration-300 group" href="#">
+          <span class="material-symbols-outlined group-hover:scale-110 transition-transform">group</span>
+          <span class="font-inter font-semibold uppercase tracking-widest text-[10px]">Users</span>
+        </a>
+        <a data-view="admin" id="adminNavItem" class="sidebar-item hidden flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-white/5 hover:text-indigo-200 transition-all duration-300 group" href="#">
+          <span class="material-symbols-outlined group-hover:scale-110 transition-transform">admin_panel_settings</span>
+          <span class="font-inter font-semibold uppercase tracking-widest text-[10px]">Admin</span>
+        </a>
+        <a data-view="settings" class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-white/5 hover:text-indigo-200 transition-all duration-300 group" href="#">
+          <span class="material-symbols-outlined group-hover:scale-110 transition-transform">settings</span>
+          <span class="font-inter font-semibold uppercase tracking-widest text-[10px]">Settings</span>
+        </a>
+        <a data-view="rules" class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-white/5 hover:text-indigo-200 transition-all duration-300 group" href="#">
+          <span class="material-symbols-outlined group-hover:scale-110 transition-transform">gavel</span>
+          <span class="font-inter font-semibold uppercase tracking-widest text-[10px]">Rules</span>
+        </a>
+        <a data-view="events" class="sidebar-item flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-white/5 hover:text-indigo-200 transition-all duration-300 group" href="#">
+          <span class="material-symbols-outlined group-hover:scale-110 transition-transform">event</span>
+          <span class="font-inter font-semibold uppercase tracking-widest text-[10px]">Events</span>
+        </a>
+      </nav>
+      <div class="mt-auto pt-6 border-t border-outline-variant/10">
+        <div class="flex items-center gap-3 px-4 py-2 mb-2">
+          <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-dim flex items-center justify-center text-lg" id="userAvatarEmoji">👤</div>
+          <div class="overflow-hidden">
+            <p class="text-[11px] font-bold text-on-surface truncate" id="sidebarUserName">Loading...</p>
+            <p class="text-[9px] text-slate-500 uppercase tracking-widest" id="userRoleBadge"></p>
           </div>
-          <div class="space-y-1">
-            <div id="logoutBtnMain" class="sidebar-item flex items-center gap-3 px-3 py-2 text-sm text-red-400 mt-2"><i class="fas fa-sign-out-alt w-4"></i><span>Logout</span></div>
-          </div>
         </div>
-      </aside>
+        <div class="sidebar-item flex items-center gap-3 px-4 py-2 text-slate-500 hover:text-indigo-300 transition-colors cursor-pointer" id="logoutBtnMain">
+          <span class="material-symbols-outlined text-sm">logout</span>
+          <span class="font-inter font-semibold uppercase tracking-widest text-[10px]">Logout</span>
+        </div>
+      </div>
+    </aside>
 
-      <!-- MAIN CONTENT (views) -->
-      <main class="flex-1 p-5 md:p-8 overflow-auto">
-        <!-- HOME DASHBOARD -->
-        <div id="homeView" class="view-content space-y-6 animate-fade-slide">
-          <h1 class="text-3xl font-bold bg-gradient-to-r from-white to-indigo-300 bg-clip-text text-transparent">Dashboard</h1>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            <div class="glass-card p-5 text-center"><i class="fas fa-trophy text-4xl text-yellow-400 mb-2"></i><h3 class="text-xl font-bold">Leaderboards</h3><p class="text-sm text-gray-300">Track top players across all sports</p><button data-view="leaderboard" class="mt-3 text-indigo-300">View →</button></div>
-            <div class="glass-card p-5 text-center"><i class="fas fa-users text-4xl text-blue-400 mb-2"></i><h3 class="text-xl font-bold">Users</h3><p class="text-sm text-gray-300">Discover and connect with players</p><button data-view="users" class="mt-3 text-indigo-300">Explore →</button></div>
-            <div class="glass-card p-5 text-center"><i class="fas fa-futbol text-4xl text-green-400 mb-2"></i><h3 class="text-xl font-bold">Join Team</h3><p class="text-sm text-gray-300">Create or join football/basketball teams</p><button id="joinTeamBtn" class="mt-3 text-indigo-300">Join Now →</button></div>
-          </div>
-          <div id="hackerActionsPanel" class="glass-card p-5 hidden"><h3 class="font-bold">Hacker Abilities</h3><div id="hackerControls"></div></div>
-          <div id="hostFlagPanel" class="glass-card p-5 hidden"><h3 class="font-bold">Flag User</h3><select id="flagUserSelect" class="w-full p-2 rounded"></select><textarea id="flagReason" placeholder="Reason" rows="2" class="w-full mt-2 p-2 rounded"></textarea><button id="submitFlagBtn" class="mt-2 bg-red-600 px-4 py-2 rounded">Flag (once/hour)</button></div>
-        </div>
+    <main class="ml-64 p-12 max-w-7xl" id="dynamicMain"></main>
 
-        <!-- LEADERBOARD PAGE -->
-        <div id="leaderboardView" class="view-content hidden space-y-6">
-          <div class="flex flex-wrap justify-between items-center"><h2 class="text-2xl font-bold">🏆 Leaderboards</h2><div class="flex gap-2 flex-wrap"><button id="filterAllSports" class="bg-indigo-600/30 px-3 py-1 rounded-full text-sm">All</button><button id="filterSports" class="bg-indigo-600/30 px-3 py-1 rounded-full text-sm">Sports (no Chess)</button><button id="filterChess" class="bg-indigo-600/30 px-3 py-1 rounded-full text-sm">Chess</button><button id="filterFootball" class="bg-indigo-600/30 px-3 py-1 rounded-full text-sm">Football</button><button id="filterBasketball" class="bg-indigo-600/30 px-3 py-1 rounded-full text-sm">Basketball</button><button id="filterBalloon" class="bg-indigo-600/30 px-3 py-1 rounded-full text-sm">Balloon Ball</button></div></div>
-          <div id="leaderboardContainer" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
-        </div>
-
-        <!-- USERS PAGE -->
-        <div id="usersView" class="view-content hidden space-y-6">
-          <h2 class="text-2xl font-bold">All Users</h2>
-          <div class="glass-card p-4 overflow-x-auto"><table class="w-full text-left"><thead>汽<th>Username</th><th>Full Name</th><th>Role</th><th>Points</th><th id="adminActionsHeader" class="hidden">Actions</th> </thead><tbody id="usersTableBody"></tbody> </table></div>
-        </div>
-
-        <!-- ADMIN PANEL -->
-        <div id="adminView" class="view-content hidden space-y-6">
-          <h2 class="text-2xl font-bold">Admin Panel</h2>
-          <div class="glass-card p-5"><h3 class="font-bold">Edit Patch Notes</h3><textarea id="patchNotesContent" rows="3" class="w-full p-2 rounded"></textarea><button id="savePatchNotesBtn" class="mt-2 bg-purple-600 px-4 py-2 rounded">Save</button></div>
-          <div class="glass-card p-5"><h3 class="font-bold">Season Settings</h3><input type="text" id="seasonName" placeholder="Season Name" class="w-full p-2 rounded"><button id="updateSeasonBtn" class="mt-2 bg-purple-600 px-4 py-2 rounded">Update Season</button></div>
-          <div class="glass-card p-5"><h3 class="font-bold">Special Leaderboard (Events)</h3><div id="specialLeaderboardAdmin"></div><button id="updateSpecialLeaderboardBtn" class="mt-2 bg-purple-600 px-4 py-2 rounded">Update Special LB</button></div>
-          <div class="glass-card p-5"><h3 class="font-bold">Manage Users</h3><input type="text" id="adminUserUsername" placeholder="Username" class="w-full p-2 rounded mb-2"><input type="text" id="adminUserRole" placeholder="Role (participant/host/hacker/admin)" class="w-full p-2 rounded mb-2"><button id="updateUserRoleBtn" class="mt-2 bg-purple-600 px-4 py-2 rounded">Change Role</button><button id="deleteUserBtn" class="mt-2 bg-red-600 px-4 py-2 rounded ml-2">Delete User</button><button id="editPointsBtn" class="mt-2 bg-green-600 px-4 py-2 rounded">Edit Points</button></div>
-        </div>
-
-        <!-- SETTINGS PAGE -->
-        <div id="settingsView" class="view-content hidden space-y-6">
-          <h2 class="text-2xl font-bold">Settings</h2>
-          <div class="glass-card p-5 space-y-4"><h3 class="font-bold">Appearance</h3><label class="flex items-center gap-2"><input type="checkbox" id="darkModeToggle" checked> Dark Mode (always on)</label><h3 class="font-bold mt-4">Language</h3><select id="languageSelect"><option value="en">English</option><option value="es">Spanish</option><option value="fr">French</option></select><h3 class="font-bold mt-4">Change Password</h3><input type="password" id="newPassword" placeholder="New Password" class="w-full p-2 rounded"><button id="changePasswordBtn" class="mt-2 bg-indigo-600 px-4 py-2 rounded">Update Password</button><h3 class="font-bold mt-4">Change Username</h3><input type="text" id="newUsername" placeholder="New Username" class="w-full p-2 rounded"><button id="changeUsernameBtn" class="mt-2 bg-indigo-600 px-4 py-2 rounded">Update Username</button><div id="settingsError" class="error-message"></div></div>
-        </div>
-
-        <!-- RULES PAGE -->
-        <div id="rulesView" class="view-content hidden space-y-6">
-          <h2 class="text-2xl font-bold">Tournament Rules</h2>
-          <div class="glass-card p-5"><h3 class="font-bold">Football</h3><p>5v5, 2 halves of 20 mins, no offside. Fair play required.</p><h3 class="font-bold mt-4">Basketball</h3><p>3v3 half-court, first to 21 points. No dunking violations.</p><h3 class="font-bold mt-4">Chess</h3><p>Classical 30+0, no engine assistance.</p><h3 class="font-bold mt-4">Balloon Ball</h3><p>Volleyball style with balloon, 4 players per team.</p></div>
-        </div>
-
-        <!-- EVENTS PAGE -->
-        <div id="eventsView" class="view-content hidden space-y-6">
-          <h2 class="text-2xl font-bold">Events & Season</h2>
-          <div class="glass-card p-5"><h3 class="font-bold">Current Season: <span id="seasonDisplay">Loading...</span></h3><div id="specialLeaderboardEvents" class="mt-3"></div></div>
-          <div class="glass-card p-5"><h3 class="font-bold">Latest Hacker Message</h3><div class="flex items-center gap-3"><img id="hackerAvatar" class="w-12 h-12 rounded-full bg-gray-700" src="https://randomuser.me/api/portraits/men/1.jpg"><div><p id="hackerMessageText">No messages yet</p><span id="hackerMessageTime" class="text-xs text-gray-400"></span></div></div><div id="hackerMessageInput" class="mt-3 hidden"><textarea id="newHackerMessage" placeholder="Send a message as hacker..." rows="2" class="w-full p-2 rounded"></textarea><button id="sendHackerMessageBtn" class="mt-2 bg-purple-600 px-4 py-2 rounded">Send Message</button></div></div>
-        </div>
-      </main>
+    <div class="fixed bottom-8 right-8 z-[100]" id="patchNotesBadgeContainer" style="display: none;">
+      <button id="patchNotesBadgeBtn" class="flex items-center gap-3 px-6 py-3 glass-panel rounded-full border-primary/30 shadow-[0_0_20px_rgba(186,158,255,0.15)] hover:scale-105 transition-transform group">
+        <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span></span>
+        <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Patch Notes v2.4.1</span>
+      </button>
     </div>
-    <div id="patchNotesBadge" class="badge-update hidden"><i class="fas fa-code-branch"></i> Patch Notes</div>
   </div>
 
+  <script type="importmap">
+    {
+      "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+        "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js",
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"
+      }
+    }
+  </script>
+
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, getDocs, collection, query, where, updateDoc, deleteDoc, addDoc, serverTimestamp, orderBy, limit, Timestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { initializeApp } from "firebase/app";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, updatePassword, deleteUser } from "firebase/auth";
+    import { getFirestore, doc, setDoc, getDoc, getDocs, collection, query, where, updateDoc, deleteDoc, addDoc, serverTimestamp, orderBy, limit, Timestamp, arrayUnion, arrayRemove } from "firebase/firestore";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDzQ6ylSkHYj-hiMqNqkByHnakWswtV9_Y",
@@ -201,31 +206,27 @@
     const db = getFirestore(app);
     let currentUserData = null;
 
-    // Helper: normalize username for email and uniqueness
+    // Helper: normalize username
     function normalizeUsername(raw) {
       return raw.toLowerCase().replace(/[^a-z0-9]/g, '');
     }
 
     async function usernameExists(username) {
       const normalized = normalizeUsername(username);
-      if (normalized.length === 0) return true; // invalid username
+      if (!normalized) return true;
       const q = query(collection(db, "users"), where("normalizedUsername", "==", normalized));
       const snap = await getDocs(q);
       return !snap.empty;
     }
 
     async function signUpWithUsername(username, fullName, password, confirm) {
-      // Basic validation
       if (password !== confirm) throw new Error("Passwords do not match");
       if (password.length < 6) throw new Error("Password must be at least 6 characters");
-
-      // Normalize and validate username
       const normalized = normalizeUsername(username);
       if (normalized.length < 3) throw new Error("Username must be at least 3 alphanumeric characters");
       if (await usernameExists(username)) throw new Error("Username already taken");
 
       const email = normalized + "@ethereal.local";
-      
       try {
         const cred = await createUserWithEmailAndPassword(auth, email, password);
         await setDoc(doc(db, "users", cred.user.uid), {
@@ -235,40 +236,28 @@
           email: email,
           role: "participant",
           points: 0,
+          avatarEmoji: "👤",
+          stats: {
+            football: { goals: 0, assists: 0, blocks: 0, wins: 0, draws: 0, losses: 0, teamPoints: 0 },
+            basketball: { goals: 0, skillPoints: 0, teamPoints: 0 }
+          },
+          teams: [],
           createdAt: serverTimestamp()
         });
         return cred.user;
-      } catch (firebaseError) {
-        // Provide user-friendly messages based on error code
-        const errorCode = firebaseError.code;
-        if (errorCode === 'auth/weak-password') {
-          throw new Error("Password is too weak. Use at least 6 characters with a mix of letters and numbers.");
-        } else if (errorCode === 'auth/email-already-in-use') {
-          throw new Error("Username already taken (email conflict). Please choose a different username.");
-        } else if (errorCode === 'auth/invalid-email') {
-          throw new Error("Invalid username. Use only letters and numbers.");
-        } else {
-          console.error(firebaseError);
-          throw new Error("Signup failed: " + (firebaseError.message || "Unknown error"));
-        }
+      } catch (err) {
+        if (err.code === 'auth/weak-password') throw new Error("Password too weak");
+        if (err.code === 'auth/email-already-in-use') throw new Error("Username already taken");
+        throw new Error(err.message);
       }
     }
 
     async function loginWithUsername(username, password) {
       const normalized = normalizeUsername(username);
-      if (normalized.length === 0) throw new Error("Invalid username");
       const email = normalized + "@ethereal.local";
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-      } catch (firebaseError) {
-        if (firebaseError.code === 'auth/user-not-found' || firebaseError.code === 'auth/wrong-password') {
-          throw new Error("Invalid username or password");
-        }
-        throw new Error(firebaseError.message);
-      }
+      await signInWithEmailAndPassword(auth, email, password);
     }
 
-    // Load user data from Firestore by uid
     async function loadUserData(uid) {
       const userRef = doc(db, "users", uid);
       const snap = await getDoc(userRef);
@@ -276,180 +265,13 @@
         currentUserData = snap.data();
         document.getElementById("sidebarUserName").innerText = currentUserData.username || "User";
         document.getElementById("userRoleBadge").innerText = currentUserData.role || "participant";
-        document.getElementById("userAvatar").innerText = (currentUserData.username?.charAt(0) || "U").toUpperCase();
-        // Show/hide admin nav
-        if (currentUserData.role === "admin") {
-          document.getElementById("adminNavItem").classList.remove("hidden");
-        } else {
-          document.getElementById("adminNavItem").classList.add("hidden");
-        }
-        // Hacker panel
-        if (currentUserData.role === "hacker") {
-          document.getElementById("hackerActionsPanel").classList.remove("hidden");
-          renderHackerControls();
-        } else {
-          document.getElementById("hackerActionsPanel").classList.add("hidden");
-        }
-        // Host panel
-        if (currentUserData.role === "host") {
-          document.getElementById("hostFlagPanel").classList.remove("hidden");
-          loadUsersForFlagging();
-        } else {
-          document.getElementById("hostFlagPanel").classList.add("hidden");
-        }
-        // Admin actions in users table
-        if (currentUserData.role === "admin") {
-          document.getElementById("adminActionsHeader").classList.remove("hidden");
-        } else {
-          document.getElementById("adminActionsHeader").classList.add("hidden");
-        }
+        const avatarEmoji = currentUserData.avatarEmoji || "👤";
+        document.getElementById("userAvatarEmoji").innerText = avatarEmoji;
+        const adminNav = document.getElementById("adminNavItem");
+        if (adminNav) adminNav.classList.toggle("hidden", currentUserData.role !== "admin");
         return true;
       }
       return false;
-    }
-
-    // Render leaderboard
-    async function renderLeaderboard(filter = "all") {
-      const container = document.getElementById("leaderboardContainer");
-      container.innerHTML = "<div class='col-span-2 text-center'>Loading...</div>";
-      const sports = filter === "all" ? ["Football", "Basketball", "Chess", "Balloon Ball"] : filter === "sports" ? ["Football", "Basketball", "Balloon Ball"] : [filter];
-      let html = "";
-      for (let sport of sports) {
-        const q = query(collection(db, "leaderboards"), where("sport", "==", sport), orderBy("points", "desc"), limit(10));
-        const snap = await getDocs(q);
-        let rankHtml = `<div class="glass-card p-4"><h3 class="font-bold text-xl">${sport}</h3><table class="w-full text-sm"><thead>汽<th>Rank</th><th>Player</th><th>Points</th> </thead><tbody>`;
-        let idx = 1;
-        snap.forEach(docSnap => {
-          rankHtml += `汽<td>${idx++}</td><td>${docSnap.data().playerName}</td><td>${docSnap.data().points}</td> </tr>`;
-        });
-        if (idx === 1) rankHtml += "<tr><td colspan='3'>No data</td></tr>";
-        rankHtml += "</tbody></table></div>";
-        html += rankHtml;
-      }
-      container.innerHTML = html;
-    }
-
-    // Users table render
-    async function renderUsersTable() {
-      const usersSnap = await getDocs(collection(db, "users"));
-      const tbody = document.getElementById("usersTableBody");
-      tbody.innerHTML = "";
-      usersSnap.forEach(docSnap => {
-        const u = docSnap.data();
-        const row = tbody.insertRow();
-        row.insertCell(0).innerText = u.username || "No username";
-        row.insertCell(1).innerText = u.name || "";
-        row.insertCell(2).innerText = u.role;
-        row.insertCell(3).innerText = u.points || 0;
-        if (currentUserData?.role === "admin") {
-          const cell = row.insertCell(4);
-          cell.innerHTML = `<button class="edit-user-btn text-indigo-400" data-uid="${docSnap.id}">Edit Role</button> <button class="delete-user-btn text-red-400" data-uid="${docSnap.id}">Delete</button>`;
-        }
-      });
-      if (currentUserData?.role === "admin") {
-        document.querySelectorAll(".edit-user-btn").forEach(btn => btn.addEventListener("click", async (e) => {
-          const uid = btn.dataset.uid;
-          const newRole = prompt("Enter new role (participant/host/hacker/admin):");
-          if (newRole) await updateDoc(doc(db, "users", uid), { role: newRole });
-          renderUsersTable();
-        }));
-        document.querySelectorAll(".delete-user-btn").forEach(btn => btn.addEventListener("click", async (e) => {
-          if (confirm("Delete user?")) await deleteDoc(doc(db, "users", btn.dataset.uid));
-          renderUsersTable();
-        }));
-      }
-    }
-
-    // Patch notes badge
-    async function loadPatchNotesBadge() {
-      const patchRef = doc(db, "meta", "patchNotes");
-      const snap = await getDoc(patchRef);
-      if (snap.exists()) {
-        const notes = snap.data().content;
-        const badge = document.getElementById("patchNotesBadge");
-        badge.classList.remove("hidden");
-        badge.onclick = () => alert("Patch Notes:\n" + notes);
-      }
-    }
-
-    // Admin functions
-    async function savePatchNotes(content) {
-      await setDoc(doc(db, "meta", "patchNotes"), { content, updated: serverTimestamp() });
-    }
-    async function updateSeason(seasonName) {
-      await setDoc(doc(db, "meta", "season"), { name: seasonName, updated: serverTimestamp() });
-      document.getElementById("seasonDisplay").innerText = seasonName;
-    }
-    async function loadSeason() {
-      const snap = await getDoc(doc(db, "meta", "season"));
-      if (snap.exists()) document.getElementById("seasonDisplay").innerText = snap.data().name;
-    }
-    // Hacker controls
-    async function renderHackerControls() {
-      const div = document.getElementById("hackerControls");
-      div.innerHTML = `<p>Multiplier (1.1-2x) for 5 hours: <input type="number" id="multiplierValue" step="0.1" min="1.1" max="2" class="w-24"> <select id="multiplierSport"><option>Football</option><option>Basketball</option><option>Chess</option><option>Balloon Ball</option></select> <button id="activateMultiplierBtn" class="bg-purple-600 px-3 py-1 rounded">Activate</button> <span id="multiplierStatus"></span></p>`;
-      document.getElementById("activateMultiplierBtn")?.addEventListener("click", async () => {
-        const factor = parseFloat(document.getElementById("multiplierValue").value);
-        const sport = document.getElementById("multiplierSport").value;
-        if (isNaN(factor) || factor < 1.1 || factor > 2) return alert("Factor must be between 1.1 and 2");
-        const hackerRef = doc(db, "users", auth.currentUser.uid);
-        const hackerSnap = await getDoc(hackerRef);
-        let used = hackerSnap.data().multiplierUsed || 0;
-        if (used >= 2) return alert("You have used both multipliers already.");
-        await updateDoc(hackerRef, { multiplierUsed: used + 1, activeMultiplier: { factor, sport, expires: Timestamp.fromDate(new Date(Date.now() + 5*3600000)) } });
-        alert(`Multiplier active for ${sport} for 5 hours!`);
-      });
-    }
-    // Hacker message send
-    async function sendHackerMessage(msg) {
-      await addDoc(collection(db, "hackerMessages"), { userId: auth.currentUser.uid, userName: currentUserData.username, message: msg, timestamp: serverTimestamp() });
-    }
-    async function loadLatestHackerMessage() {
-      const q = query(collection(db, "hackerMessages"), orderBy("timestamp", "desc"), limit(1));
-      const snap = await getDocs(q);
-      if (!snap.empty) {
-        const msg = snap.docs[0].data();
-        document.getElementById("hackerMessageText").innerText = msg.message;
-        document.getElementById("hackerMessageTime").innerText = msg.timestamp?.toDate().toLocaleString() || "Just now";
-      }
-    }
-    // Host flagging
-    async function loadUsersForFlagging() {
-      const usersSnap = await getDocs(collection(db, "users"));
-      const select = document.getElementById("flagUserSelect");
-      select.innerHTML = "<option value=''>Select user</option>";
-      usersSnap.forEach(docSnap => {
-        if (docSnap.id !== auth.currentUser.uid) {
-          select.innerHTML += `<option value="${docSnap.id}">${docSnap.data().username}</option>`;
-        }
-      });
-    }
-    async function flagUser(reportedId, reason) {
-      const lastFlagRef = doc(db, "users", auth.currentUser.uid);
-      const lastSnap = await getDoc(lastFlagRef);
-      const lastFlag = lastSnap.data().lastFlagTime;
-      if (lastFlag && (Date.now() - lastFlag.toDate().getTime()) < 3600000) return alert("You can flag only once per hour.");
-      await addDoc(collection(db, "flags"), { reporterId: auth.currentUser.uid, reportedId, reason, timestamp: serverTimestamp() });
-      await updateDoc(lastFlagRef, { lastFlagTime: serverTimestamp() });
-      alert("Flag sent to admin.");
-    }
-    // Special leaderboard
-    async function loadSpecialLeaderboard() {
-      const snap = await getDoc(doc(db, "meta", "specialLeaderboard"));
-      const data = snap.exists() ? snap.data().entries : [];
-      const container = document.getElementById("specialLeaderboardEvents");
-      container.innerHTML = "<h4>Special Event Rankings</h4>" + (data.length ? data.map((e,i)=>`${i+1}. ${e.name} - ${e.points}`).join("<br>") : "No special rankings.");
-      if (currentUserData?.role === "admin") {
-        const adminDiv = document.getElementById("specialLeaderboardAdmin");
-        adminDiv.innerHTML = `<textarea id="specialLBData" rows="3" placeholder='[{"name":"Player","points":100}]' class="w-full p-2 rounded"></textarea>`;
-        document.getElementById("updateSpecialLeaderboardBtn").onclick = async () => {
-          try {
-            const entries = JSON.parse(document.getElementById("specialLBData").value);
-            await setDoc(doc(db, "meta", "specialLeaderboard"), { entries });
-            loadSpecialLeaderboard();
-          } catch(e) { alert("Invalid JSON"); }
-        };
-      }
     }
 
     // Helper to get user by username
@@ -460,145 +282,619 @@
       return { id: snap.docs[0].id, data: snap.docs[0].data() };
     }
 
-    // View switching
-    function showView(viewId) {
-      document.querySelectorAll('.view-content').forEach(v => v.classList.add('hidden'));
-      document.getElementById(viewId).classList.remove('hidden');
-      document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active-sidebar-item'));
-      const activeSide = document.querySelector(`[data-view="${viewId.replace('View', '')}"]`);
-      if (activeSide) activeSide.classList.add('active-sidebar-item');
+    // ======================== VIEW RENDERING ========================
+    const mainContainer = document.getElementById("dynamicMain");
+
+    // --- Home Dashboard ---
+    function renderHomeView() {
+      mainContainer.innerHTML = `
+        <header class="flex justify-between items-center mb-16">
+          <div><h1 class="text-5xl font-black tracking-tighter bg-gradient-to-r from-on-surface to-primary bg-clip-text text-transparent pb-1">Dashboard</h1><p class="text-on-surface-variant font-medium tracking-wide">Welcome back to the Ethereal Arena.</p></div>
+          <div class="flex items-center gap-6"><div class="flex items-center gap-2 px-4 py-2 glass-panel rounded-full"><span class="material-symbols-outlined text-primary text-sm">bolt</span><span class="text-xs font-bold tracking-widest">2,450 AP</span></div><button class="w-10 h-10 rounded-full glass-panel flex items-center justify-center"><span class="material-symbols-outlined text-on-surface-variant">notifications</span></button></div>
+        </header>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="group glass-panel rounded-2xl p-8 flex flex-col h-[400px] hero-card-glow transition-all duration-500 cursor-pointer overflow-hidden relative" data-nav="leaderboard">
+            <div class="absolute -top-10 -right-10 w-40 h-40 bg-primary/10 blur-[80px] rounded-full group-hover:bg-primary/20"></div>
+            <div class="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-8 border border-primary/20"><span class="material-symbols-outlined text-3xl text-primary">trophy</span></div>
+            <h3 class="text-2xl font-bold mb-4 tracking-tight">Leaderboards</h3>
+            <p class="text-on-surface-variant leading-relaxed mb-8">Track top players across all sports and climb the global ranks.</p>
+            <div class="mt-auto"><span class="flex items-center gap-2 text-primary font-bold text-sm tracking-widest uppercase group-hover:translate-x-2 transition-transform">View <span class="material-symbols-outlined text-sm">arrow_forward</span></span></div>
+          </div>
+          <div class="group glass-panel rounded-2xl p-8 flex flex-col h-[400px] hero-card-glow transition-all duration-500 cursor-pointer overflow-hidden relative" data-nav="teams">
+            <div class="absolute -top-10 -right-10 w-40 h-40 bg-secondary/10 blur-[80px] rounded-full group-hover:bg-secondary/20"></div>
+            <div class="w-14 h-14 rounded-xl bg-secondary/10 flex items-center justify-center mb-8 border border-secondary/20"><span class="material-symbols-outlined text-3xl text-secondary">groups</span></div>
+            <h3 class="text-2xl font-bold mb-4 tracking-tight">Teams</h3>
+            <p class="text-on-surface-variant leading-relaxed mb-8">Create or join football and basketball teams. Invite friends and dominate together.</p>
+            <div class="mt-auto"><span class="flex items-center gap-2 text-secondary font-bold text-sm tracking-widest uppercase group-hover:translate-x-2 transition-transform">Manage <span class="material-symbols-outlined text-sm">arrow_forward</span></span></div>
+          </div>
+          <div class="group glass-panel rounded-2xl p-8 flex flex-col h-[400px] hero-card-glow transition-all duration-500 cursor-pointer overflow-hidden relative" data-nav="users">
+            <div class="absolute -top-10 -right-10 w-40 h-40 bg-tertiary/10 blur-[80px] rounded-full group-hover:bg-tertiary/20"></div>
+            <div class="w-14 h-14 rounded-xl bg-tertiary/10 flex items-center justify-center mb-8 border border-tertiary/20"><span class="material-symbols-outlined text-3xl text-tertiary">group</span></div>
+            <h3 class="text-2xl font-bold mb-4 tracking-tight">Users</h3>
+            <p class="text-on-surface-variant leading-relaxed mb-8">Discover and connect with players around the world.</p>
+            <div class="mt-auto"><span class="flex items-center gap-2 text-tertiary font-bold text-sm tracking-widest uppercase group-hover:translate-x-2 transition-transform">Explore <span class="material-symbols-outlined text-sm">arrow_forward</span></span></div>
+          </div>
+        </div>
+        ${currentUserData?.role === 'hacker' ? `<div class="mt-12 glass-panel rounded-2xl p-6"><h3 class="text-tertiary font-bold mb-4">Hacker Abilities</h3><div id="hackerControls" class="flex gap-4 items-center flex-wrap"></div></div>` : ''}
+        ${currentUserData?.role === 'host' ? `<div class="mt-12 glass-panel rounded-2xl p-6"><h3 class="text-secondary font-bold mb-4">Flag User</h3><select id="flagUserSelect" class="bg-surface-container-high p-2 rounded mr-2"></select><textarea id="flagReason" placeholder="Reason" rows="2" class="bg-surface-container-high p-2 rounded w-64 mr-2"></textarea><button id="submitFlagBtn" class="bg-error/20 text-error px-4 py-2 rounded">Flag (once/hour)</button></div>` : ''}
+      `;
+      document.querySelectorAll('[data-nav]').forEach(el => el.addEventListener('click', (e) => { const view = el.getAttribute('data-nav'); if (view === 'leaderboard') switchView('leaderboard'); if (view === 'teams') switchView('teams'); if (view === 'users') switchView('users'); }));
+      if (currentUserData?.role === 'hacker') renderHackerControls();
+      if (currentUserData?.role === 'host') loadUsersForFlagging();
     }
 
-    // Navigation
-    document.querySelectorAll("[data-view]").forEach(el => {
-      el.addEventListener("click", () => {
-        const view = el.getAttribute("data-view");
-        if (view === "home") showView("homeView");
-        if (view === "leaderboard") { showView("leaderboardView"); renderLeaderboard(); }
-        if (view === "users") { showView("usersView"); renderUsersTable(); }
-        if (view === "admin") { if (currentUserData?.role === "admin") showView("adminView"); else alert("Unauthorized"); }
-        if (view === "settings") showView("settingsView");
-        if (view === "rules") showView("rulesView");
-        if (view === "events") { showView("eventsView"); loadSeason(); loadSpecialLeaderboard(); loadLatestHackerMessage(); }
+    // --- Leaderboard with stats ---
+    async function renderLeaderboardView() {
+      mainContainer.innerHTML = `
+        <div class="mb-8">
+          <h2 class="text-3xl font-bold">🏆 Leaderboards</h2>
+          <p class="text-on-surface-variant mt-1">Top players by sport</p>
+        </div>
+        <div class="flex gap-2 mb-6 border-b border-outline-variant/20">
+          <button class="leaderboard-tab px-5 py-2 text-sm font-medium transition-all" data-sport="football">⚽ Football</button>
+          <button class="leaderboard-tab px-5 py-2 text-sm font-medium transition-all" data-sport="basketball">🏀 Basketball</button>
+          <button class="leaderboard-tab px-5 py-2 text-sm font-medium transition-all" data-sport="chess">♟️ Chess</button>
+          <button class="leaderboard-tab px-5 py-2 text-sm font-medium transition-all" data-sport="balloon">🎈 Balloon Ball</button>
+        </div>
+        <div id="leaderboardContainer" class="glass-panel rounded-2xl overflow-hidden"></div>
+      `;
+      const tabs = document.querySelectorAll('.leaderboard-tab');
+      tabs[0].classList.add('leaderboard-tab-active');
+      tabs.forEach(tab => tab.addEventListener('click', async (e) => {
+        tabs.forEach(t => t.classList.remove('leaderboard-tab-active'));
+        tab.classList.add('leaderboard-tab-active');
+        await loadLeaderboardTab(tab.getAttribute('data-sport'));
+      }));
+      await loadLeaderboardTab('football');
+    }
+
+    async function loadLeaderboardTab(sport) {
+      const container = document.getElementById("leaderboardContainer");
+      container.innerHTML = '<div class="p-8 text-center">Loading...</div>';
+      let querySnapshot;
+      if (sport === 'chess' || sport === 'balloon') {
+        const pointsField = sport === 'chess' ? 'chessPoints' : 'balloonPoints';
+        const q = query(collection(db, "users"), where("role", "!=", "admin"), orderBy(pointsField, "desc"), limit(20));
+        querySnapshot = await getDocs(q);
+        let html = '<div class="overflow-x-auto"><table class="leaderboard-table w-full"><thead class="bg-surface-container-high/50">汽<th>Rank</th><th>Player</th><th>Points</th> </thead><tbody>';
+        let idx = 1;
+        querySnapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const points = data[pointsField] || 0;
+          html += `汽<td>#${idx++}</td><td><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-sm">${data.avatarEmoji || '👤'}</div><span>${data.username}</span></div></td><td class="text-right font-mono">${points}</td></tr>`;
+        });
+        if (idx === 1) html += '<tr><td colspan="3" class="text-center py-8">No data</td></tr>';
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+      } else {
+        const q = query(collection(db, "users"), where("role", "!=", "admin"));
+        querySnapshot = await getDocs(q);
+        let users = [];
+        querySnapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const stats = data.stats?.[sport] || {};
+          let totalPoints = 0;
+          if (sport === 'football') {
+            totalPoints = (stats.goals || 0) * 2 + (stats.assists || 0) * 1 + (stats.blocks || 0) * 1 + (stats.teamPoints || 0);
+          } else if (sport === 'basketball') {
+            totalPoints = (stats.goals || 0) * 2 + (stats.skillPoints || 0) + (stats.teamPoints || 0);
+          }
+          users.push({ username: data.username, avatarEmoji: data.avatarEmoji || '👤', stats, totalPoints });
+        });
+        users.sort((a,b) => b.totalPoints - a.totalPoints);
+        let html = `<div class="overflow-x-auto"><table class="leaderboard-table w-full"><thead class="bg-surface-container-high/50"><tr><th>Rank</th><th>Player</th>`;
+        if (sport === 'football') html += `<th>Goals</th><th>Assists</th><th>Blocks</th><th>W/D/L</th><th>Team Pts</th><th>Total</th>`;
+        else html += `<th>Goals</th><th>Skill Pts</th><th>Team Pts</th><th>Total</th>`;
+        html += `</tr></thead><tbody>`;
+        users.slice(0,20).forEach((user, idx) => {
+          const s = user.stats;
+          html += `<tr><td>#${idx+1}</td><td><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-sm">${user.avatarEmoji}</div><span>${user.username}</span></div></td>`;
+          if (sport === 'football') {
+            const wdl = `${s.wins || 0}/${s.draws || 0}/${s.losses || 0}`;
+            html += `<td>${s.goals || 0}</td><td>${s.assists || 0}</td><td>${s.blocks || 0}</td><td>${wdl}</td><td>${s.teamPoints || 0}</td><td class="font-bold">${user.totalPoints}</td>`;
+          } else {
+            html += `<td>${s.goals || 0}</td><td>${s.skillPoints || 0}</td><td>${s.teamPoints || 0}</td><td class="font-bold">${user.totalPoints}</td>`;
+          }
+          html += `</tr>`;
+        });
+        if (users.length === 0) html += '<tr><td colspan="8" class="text-center py-8">No data</td></tr>';
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+      }
+    }
+
+    // --- Teams View ---
+    async function renderTeamsView() {
+      mainContainer.innerHTML = `
+        <div class="mb-8">
+          <h2 class="text-3xl font-bold">⚔️ Teams</h2>
+          <p class="text-on-surface-variant mt-1">Create or join football and basketball teams</p>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div class="glass-panel p-6">
+            <h3 class="text-xl font-bold mb-4">Create a Team</h3>
+            <select id="teamSportSelect" class="bg-surface-container-high p-2 rounded w-full mb-3">
+              <option value="football">Football</option>
+              <option value="basketball">Basketball</option>
+            </select>
+            <input type="text" id="teamNameInput" placeholder="Team Name" class="bg-surface-container-high p-2 rounded w-full mb-3">
+            <button id="createTeamBtn" class="bg-primary px-4 py-2 rounded w-full">Create Team</button>
+          </div>
+          <div class="glass-panel p-6">
+            <h3 class="text-xl font-bold mb-4">Pending Invitations</h3>
+            <div id="invitationsList" class="space-y-2">Loading...</div>
+          </div>
+        </div>
+        <div class="mt-8">
+          <h3 class="text-xl font-bold mb-4">My Teams</h3>
+          <div id="myTeamsList" class="grid grid-cols-1 md:grid-cols-2 gap-4">Loading...</div>
+        </div>
+        <div class="mt-8">
+          <h3 class="text-xl font-bold mb-4">All Teams (Football)</h3>
+          <div id="allTeamsFootball" class="space-y-2 mb-6">Loading...</div>
+          <h3 class="text-xl font-bold mb-4">All Teams (Basketball)</h3>
+          <div id="allTeamsBasketball" class="space-y-2">Loading...</div>
+        </div>
+      `;
+      await loadInvitationsAndTeams();
+      document.getElementById("createTeamBtn").onclick = async () => {
+        const sport = document.getElementById("teamSportSelect").value;
+        const name = document.getElementById("teamNameInput").value.trim();
+        if (!name) return alert("Team name required");
+        const teamRef = await addDoc(collection(db, "teams"), {
+          name: name,
+          sport: sport,
+          members: [auth.currentUser.uid],
+          captain: auth.currentUser.uid,
+          createdAt: serverTimestamp()
+        });
+        await updateDoc(doc(db, "users", auth.currentUser.uid), { teams: arrayUnion(teamRef.id) });
+        await loadInvitationsAndTeams();
+      };
+    }
+
+    async function loadInvitationsAndTeams() {
+      // Load invitations for current user
+      const invQuery = query(collection(db, "invitations"), where("toUserId", "==", auth.currentUser.uid), where("status", "==", "pending"));
+      const invSnap = await getDocs(invQuery);
+      const invList = document.getElementById("invitationsList");
+      if (invSnap.empty) invList.innerHTML = '<div class="text-on-surface-variant">No pending invitations.</div>';
+      else {
+        let html = '';
+        for (const invDoc of invSnap.docs) {
+          const inv = invDoc.data();
+          const fromUser = await getDoc(doc(db, "users", inv.fromUserId));
+          const fromName = fromUser.exists() ? fromUser.data().username : 'Unknown';
+          const teamSnap = await getDoc(doc(db, "teams", inv.teamId));
+          const teamName = teamSnap.exists() ? teamSnap.data().name : 'Deleted team';
+          html += `<div class="flex justify-between items-center glass-panel p-3 rounded-lg">
+            <span>${fromName} invited you to join <strong>${teamName}</strong> (${inv.sport})</span>
+            <div><button class="accept-invite text-green-400 mr-2" data-id="${invDoc.id}">Accept</button><button class="decline-invite text-red-400" data-id="${invDoc.id}">Decline</button></div>
+          </div>`;
+        }
+        invList.innerHTML = html;
+        document.querySelectorAll('.accept-invite').forEach(btn => btn.addEventListener('click', async (e) => {
+          const invId = btn.dataset.id;
+          const invDoc = await getDoc(doc(db, "invitations", invId));
+          if (!invDoc.exists()) return;
+          const inv = invDoc.data();
+          await updateDoc(doc(db, "invitations", invId), { status: "accepted" });
+          const teamRef = doc(db, "teams", inv.teamId);
+          const teamSnap = await getDoc(teamRef);
+          if (teamSnap.exists()) {
+            const members = teamSnap.data().members || [];
+            if (!members.includes(auth.currentUser.uid)) {
+              await updateDoc(teamRef, { members: arrayUnion(auth.currentUser.uid) });
+              await updateDoc(doc(db, "users", auth.currentUser.uid), { teams: arrayUnion(inv.teamId) });
+            }
+          }
+          await loadInvitationsAndTeams();
+        }));
+        document.querySelectorAll('.decline-invite').forEach(btn => btn.addEventListener('click', async (e) => {
+          const invId = btn.dataset.id;
+          await updateDoc(doc(db, "invitations", invId), { status: "declined" });
+          await loadInvitationsAndTeams();
+        }));
+      }
+
+      // Load user's teams
+      const userTeams = currentUserData?.teams || [];
+      const myTeamsContainer = document.getElementById("myTeamsList");
+      if (userTeams.length === 0) myTeamsContainer.innerHTML = '<div class="text-on-surface-variant">You are not in any team yet.</div>';
+      else {
+        let html = '';
+        for (const teamId of userTeams) {
+          const teamSnap = await getDoc(doc(db, "teams", teamId));
+          if (teamSnap.exists()) {
+            const team = teamSnap.data();
+            const memberNames = [];
+            for (const uid of team.members) {
+              const userSnap = await getDoc(doc(db, "users", uid));
+              if (userSnap.exists()) memberNames.push(userSnap.data().username);
+            }
+            html += `<div class="glass-panel p-4 rounded-lg">
+              <div class="flex justify-between items-start">
+                <div><h4 class="font-bold">${team.name}</h4><p class="text-xs text-on-surface-variant">${team.sport} • Members: ${memberNames.join(', ')}</p></div>
+                <button class="leave-team text-error text-sm" data-team="${teamId}">Leave Team</button>
+              </div>
+              ${team.captain === auth.currentUser.uid ? `<button class="delete-team text-error text-xs mt-2" data-team="${teamId}">Delete Team</button>` : ''}
+            </div>`;
+          }
+        }
+        myTeamsContainer.innerHTML = html;
+        document.querySelectorAll('.leave-team').forEach(btn => btn.addEventListener('click', async (e) => {
+          const teamId = btn.dataset.team;
+          const teamRef = doc(db, "teams", teamId);
+          const teamSnap = await getDoc(teamRef);
+          if (teamSnap.exists()) {
+            const members = teamSnap.data().members.filter(uid => uid !== auth.currentUser.uid);
+            if (members.length === 0) {
+              await deleteDoc(teamRef);
+            } else {
+              await updateDoc(teamRef, { members: members });
+            }
+            await updateDoc(doc(db, "users", auth.currentUser.uid), { teams: arrayRemove(teamId) });
+          }
+          await loadInvitationsAndTeams();
+        }));
+        document.querySelectorAll('.delete-team').forEach(btn => btn.addEventListener('click', async (e) => {
+          if (confirm("Delete this team permanently?")) {
+            const teamId = btn.dataset.team;
+            const teamSnap = await getDoc(doc(db, "teams", teamId));
+            if (teamSnap.exists() && teamSnap.data().captain === auth.currentUser.uid) {
+              for (const uid of teamSnap.data().members) {
+                await updateDoc(doc(db, "users", uid), { teams: arrayRemove(teamId) });
+              }
+              await deleteDoc(doc(db, "teams", teamId));
+            }
+            await loadInvitationsAndTeams();
+          }
+        }));
+      }
+
+      // All teams (for inviting)
+      const teamsSnap = await getDocs(collection(db, "teams"));
+      const footballTeams = [];
+      const basketballTeams = [];
+      teamsSnap.forEach(docSnap => {
+        const team = docSnap.data();
+        if (team.sport === 'football') footballTeams.push({ id: docSnap.id, ...team });
+        else basketballTeams.push({ id: docSnap.id, ...team });
       });
-    });
-    document.getElementById("joinTeamBtn")?.addEventListener("click", () => alert("Team creation/joining coming soon."));
+      const renderTeamInvite = (team) => `
+        <div class="flex justify-between items-center glass-panel p-3 rounded-lg">
+          <span><strong>${team.name}</strong> (${team.members.length} members)</span>
+          ${!team.members.includes(auth.currentUser.uid) ? `<button class="invite-to-team bg-primary/30 px-3 py-1 rounded" data-team="${team.id}">Request Join</button>` : '<span class="text-green-400">Already member</span>'}
+        </div>
+      `;
+      document.getElementById("allTeamsFootball").innerHTML = footballTeams.length ? footballTeams.map(renderTeamInvite).join('') : '<div class="text-on-surface-variant">No football teams yet.</div>';
+      document.getElementById("allTeamsBasketball").innerHTML = basketballTeams.length ? basketballTeams.map(renderTeamInvite).join('') : '<div class="text-on-surface-variant">No basketball teams yet.</div>';
+      document.querySelectorAll('.invite-to-team').forEach(btn => btn.addEventListener('click', async (e) => {
+        const teamId = btn.dataset.team;
+        const teamSnap = await getDoc(doc(db, "teams", teamId));
+        if (!teamSnap.exists()) return;
+        const team = teamSnap.data();
+        if (team.members.includes(auth.currentUser.uid)) return alert("Already in team");
+        await addDoc(collection(db, "invitations"), {
+          fromUserId: auth.currentUser.uid,
+          toUserId: team.captain,
+          teamId: teamId,
+          sport: team.sport,
+          status: "pending",
+          createdAt: serverTimestamp()
+        });
+        alert("Invitation sent to team captain.");
+      }));
+    }
 
-    // Leaderboard filters
-    const filters = ["All", "Sports", "Chess", "Football", "Basketball", "Balloon"];
-    filters.forEach(f => {
-      const btn = document.getElementById(`filter${f}`);
-      if (btn) btn.addEventListener("click", () => renderLeaderboard(f.toLowerCase()));
-    });
-
-    // Settings listeners
-    document.getElementById("changePasswordBtn")?.addEventListener("click", async () => {
-      const newPass = document.getElementById("newPassword").value;
-      if (newPass && newPass.length >= 6) {
-        await updatePassword(auth.currentUser, newPass);
-        alert("Password updated");
-      } else alert("Password must be at least 6 characters");
-    });
-    document.getElementById("changeUsernameBtn")?.addEventListener("click", async () => {
-      const newUsername = document.getElementById("newUsername").value.trim();
-      if (!newUsername) return alert("Enter new username");
-      if (await usernameExists(newUsername)) return alert("Username already taken");
-      await updateDoc(doc(db, "users", auth.currentUser.uid), { username: newUsername, normalizedUsername: normalizeUsername(newUsername) });
-      alert("Username updated (note: login username unchanged for this session, please logout and login with new username)");
-    });
-
-    // Admin save
-    document.getElementById("savePatchNotesBtn")?.addEventListener("click", async () => {
-      const content = document.getElementById("patchNotesContent").value;
-      await savePatchNotes(content);
-      alert("Patch notes saved");
-    });
-    document.getElementById("updateSeasonBtn")?.addEventListener("click", async () => {
-      const season = document.getElementById("seasonName").value;
-      if (season) await updateSeason(season);
-    });
-    document.getElementById("updateUserRoleBtn")?.addEventListener("click", async () => {
-      const username = document.getElementById("adminUserUsername").value;
-      const role = document.getElementById("adminUserRole").value;
-      const user = await getUserByUsername(username);
-      if (user) {
-        await updateDoc(doc(db, "users", user.id), { role });
-        alert("Role updated");
-        renderUsersTable();
-      } else alert("User not found");
-    });
-    document.getElementById("deleteUserBtn")?.addEventListener("click", async () => {
-      const username = document.getElementById("adminUserUsername").value;
-      const user = await getUserByUsername(username);
-      if (user && confirm(`Delete ${username}?`)) {
-        await deleteDoc(doc(db, "users", user.id));
-        alert("Deleted");
-        renderUsersTable();
+    // --- Users View (with avatar emoji) ---
+    async function renderUsersView() {
+      mainContainer.innerHTML = `<h2 class="text-3xl font-bold mb-6">All Users</h2><div class="glass-panel rounded-2xl overflow-x-auto"><table class="w-full text-left"><thead>汽<th class="p-4">Avatar</th><th>Username</th><th>Full Name</th><th>Role</th><th>Points</th>${currentUserData?.role === 'admin' ? '<th>Actions</th>' : ''} </thead><tbody id="usersTableBody"></tbody>  </table></div>`;
+      const usersSnap = await getDocs(collection(db, "users"));
+      const tbody = document.getElementById("usersTableBody");
+      tbody.innerHTML = "";
+      usersSnap.forEach(docSnap => {
+        const u = docSnap.data();
+        const row = tbody.insertRow();
+        row.insertCell(0).innerHTML = `<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-sm">${u.avatarEmoji || '👤'}</div>`;
+        row.insertCell(1).innerText = u.username || "No username";
+        row.insertCell(2).innerText = u.name || "";
+        row.insertCell(3).innerText = u.role;
+        row.insertCell(4).innerText = u.points || 0;
+        if (currentUserData?.role === "admin") {
+          const cell = row.insertCell(5);
+          cell.innerHTML = `<button class="edit-user text-indigo-400 mr-2" data-uid="${docSnap.id}">Edit Role</button><button class="delete-user text-red-400" data-uid="${docSnap.id}">Delete</button>`;
+        }
+      });
+      if (currentUserData?.role === "admin") {
+        document.querySelectorAll(".edit-user").forEach(btn => btn.addEventListener("click", async (e) => {
+          const uid = btn.dataset.uid;
+          const newRole = prompt("Enter new role (participant/host/hacker/admin):");
+          if (newRole) await updateDoc(doc(db, "users", uid), { role: newRole });
+          renderUsersView();
+        }));
+        document.querySelectorAll(".delete-user").forEach(btn => btn.addEventListener("click", async (e) => {
+          if (confirm("Delete user?")) await deleteDoc(doc(db, "users", btn.dataset.uid));
+          renderUsersView();
+        }));
       }
-    });
-    document.getElementById("editPointsBtn")?.addEventListener("click", async () => {
-      const username = document.getElementById("adminUserUsername").value;
-      const points = parseInt(prompt("New points:"));
-      if (isNaN(points)) return;
-      const user = await getUserByUsername(username);
-      if (user) {
-        await updateDoc(doc(db, "users", user.id), { points });
-        alert("Points updated");
-        renderUsersTable();
-      }
-    });
+    }
 
-    // Hacker message send
-    document.getElementById("sendHackerMessageBtn")?.addEventListener("click", async () => {
-      if (currentUserData.role !== "hacker") return;
-      const msg = document.getElementById("newHackerMessage").value;
-      if (msg) await sendHackerMessage(msg);
-    });
-    document.getElementById("submitFlagBtn")?.addEventListener("click", async () => {
-      const reportedId = document.getElementById("flagUserSelect").value;
-      const reason = document.getElementById("flagReason").value;
-      if (reportedId && reason) await flagUser(reportedId, reason);
-    });
+    // --- Admin Panel ---
+    async function renderAdminView() {
+      mainContainer.innerHTML = `
+        <h2 class="text-3xl font-bold mb-6">Admin Panel</h2>
+        <div class="space-y-6">
+          <div class="glass-panel p-6"><h3 class="font-bold">Add New User</h3><input type="text" id="newUsername" placeholder="Username" class="w-full p-2 rounded mb-2 bg-surface-container-high"><input type="text" id="newFullName" placeholder="Full Name" class="w-full p-2 rounded mb-2 bg-surface-container-high"><input type="password" id="newPassword" placeholder="Password" class="w-full p-2 rounded mb-2 bg-surface-container-high"><select id="newRole" class="w-full p-2 rounded mb-2 bg-surface-container-high"><option>participant</option><option>host</option><option>hacker</option><option>admin</option></select><button id="addUserBtn" class="bg-primary px-4 py-2 rounded">Add User</button></div>
+          <div class="glass-panel p-6"><h3 class="font-bold">Edit Player Stats</h3><input type="text" id="editUsername" placeholder="Username" class="w-full p-2 rounded mb-2 bg-surface-container-high"><select id="editSport" class="w-full p-2 rounded mb-2 bg-surface-container-high"><option value="football">Football</option><option value="basketball">Basketball</option><option value="chess">Chess</option><option value="balloon">Balloon Ball</option></select><div id="statsFields"></div><button id="saveStatsBtn" class="bg-primary px-4 py-2 rounded mt-2">Save Stats</button></div>
+          <div class="glass-panel p-6"><h3 class="font-bold">Patch Notes</h3><textarea id="patchNotesContent" rows="3" class="w-full p-2 rounded bg-surface-container-high"></textarea><button id="savePatchNotesBtn" class="mt-2 bg-primary px-4 py-2 rounded">Save</button></div>
+          <div class="glass-panel p-6"><h3 class="font-bold">Season Settings</h3><input type="text" id="seasonName" placeholder="Season Name" class="w-full p-2 rounded bg-surface-container-high"><button id="updateSeasonBtn" class="mt-2 bg-primary px-4 py-2 rounded">Update Season</button></div>
+        </div>
+      `;
+      // Add User logic
+      document.getElementById("addUserBtn").onclick = async () => {
+        const username = document.getElementById("newUsername").value.trim();
+        const fullName = document.getElementById("newFullName").value.trim();
+        const password = document.getElementById("newPassword").value;
+        const role = document.getElementById("newRole").value;
+        if (!username || !fullName || !password) return alert("All fields required");
+        if (password.length < 6) return alert("Password at least 6 chars");
+        if (await usernameExists(username)) return alert("Username already taken");
+        const email = normalizeUsername(username) + "@ethereal.local";
+        try {
+          const cred = await createUserWithEmailAndPassword(auth, email, password);
+          await setDoc(doc(db, "users", cred.user.uid), {
+            username: username,
+            normalizedUsername: normalizeUsername(username),
+            name: fullName,
+            email: email,
+            role: role,
+            points: 0,
+            avatarEmoji: "👤",
+            stats: {
+              football: { goals: 0, assists: 0, blocks: 0, wins: 0, draws: 0, losses: 0, teamPoints: 0 },
+              basketball: { goals: 0, skillPoints: 0, teamPoints: 0 }
+            },
+            teams: [],
+            createdAt: serverTimestamp()
+          });
+          alert("User added");
+        } catch (err) {
+          alert("Error: " + err.message);
+        }
+      };
+      // Stats editing fields dynamically
+      const editSportSelect = document.getElementById("editSport");
+      const statsFieldsDiv = document.getElementById("statsFields");
+      function updateStatsFields() {
+        const sport = editSportSelect.value;
+        if (sport === 'football') {
+          statsFieldsDiv.innerHTML = `
+            <input type="number" id="goals" placeholder="Goals" class="w-full p-2 rounded mb-2"><input type="number" id="assists" placeholder="Assists" class="w-full p-2 rounded mb-2"><input type="number" id="blocks" placeholder="Blocks" class="w-full p-2 rounded mb-2"><input type="number" id="wins" placeholder="Wins" class="w-full p-2 rounded mb-2"><input type="number" id="draws" placeholder="Draws" class="w-full p-2 rounded mb-2"><input type="number" id="losses" placeholder="Losses" class="w-full p-2 rounded mb-2"><input type="number" id="teamPoints" placeholder="Team Points" class="w-full p-2 rounded mb-2">
+          `;
+        } else if (sport === 'basketball') {
+          statsFieldsDiv.innerHTML = `
+            <input type="number" id="goals" placeholder="Goals" class="w-full p-2 rounded mb-2"><input type="number" id="skillPoints" placeholder="Skill Points" class="w-full p-2 rounded mb-2"><input type="number" id="teamPoints" placeholder="Team Points" class="w-full p-2 rounded mb-2">
+          `;
+        } else {
+          statsFieldsDiv.innerHTML = `<input type="number" id="points" placeholder="Points" class="w-full p-2 rounded mb-2">`;
+        }
+      }
+      editSportSelect.addEventListener('change', updateStatsFields);
+      updateStatsFields();
+      document.getElementById("saveStatsBtn").onclick = async () => {
+        const username = document.getElementById("editUsername").value.trim();
+        const user = await getUserByUsername(username);
+        if (!user) return alert("User not found");
+        const sport = editSportSelect.value;
+        const userDocRef = doc(db, "users", user.id);
+        const userSnap = await getDoc(userDocRef);
+        let stats = userSnap.data().stats || {};
+        if (sport === 'football') {
+          stats.football = {
+            goals: parseInt(document.getElementById("goals").value) || 0,
+            assists: parseInt(document.getElementById("assists").value) || 0,
+            blocks: parseInt(document.getElementById("blocks").value) || 0,
+            wins: parseInt(document.getElementById("wins").value) || 0,
+            draws: parseInt(document.getElementById("draws").value) || 0,
+            losses: parseInt(document.getElementById("losses").value) || 0,
+            teamPoints: parseInt(document.getElementById("teamPoints").value) || 0
+          };
+        } else if (sport === 'basketball') {
+          stats.basketball = {
+            goals: parseInt(document.getElementById("goals").value) || 0,
+            skillPoints: parseInt(document.getElementById("skillPoints").value) || 0,
+            teamPoints: parseInt(document.getElementById("teamPoints").value) || 0
+          };
+        } else {
+          const pointsField = sport === 'chess' ? 'chessPoints' : 'balloonPoints';
+          await updateDoc(userDocRef, { [pointsField]: parseInt(document.getElementById("points").value) || 0 });
+        }
+        if (sport !== 'chess' && sport !== 'balloon') {
+          await updateDoc(userDocRef, { stats });
+        }
+        alert("Stats updated");
+      };
+      // Patch notes
+      const patchSnap = await getDoc(doc(db, "meta", "patchNotes"));
+      if (patchSnap.exists()) document.getElementById("patchNotesContent").value = patchSnap.data().content;
+      document.getElementById("savePatchNotesBtn").onclick = async () => {
+        await setDoc(doc(db, "meta", "patchNotes"), { content: document.getElementById("patchNotesContent").value, updated: serverTimestamp() });
+        alert("Saved");
+      };
+      const seasonSnap = await getDoc(doc(db, "meta", "season"));
+      if (seasonSnap.exists()) document.getElementById("seasonName").value = seasonSnap.data().name;
+      document.getElementById("updateSeasonBtn").onclick = async () => {
+        await setDoc(doc(db, "meta", "season"), { name: document.getElementById("seasonName").value, updated: serverTimestamp() });
+        alert("Season updated");
+      };
+    }
+
+    // --- Settings Page (with emoji avatar picker) ---
+    async function renderSettingsView() {
+      mainContainer.innerHTML = `
+        <h2 class="text-3xl font-bold mb-6">Settings</h2>
+        <div class="space-y-6">
+          <div class="glass-panel p-6">
+            <h3 class="text-lg font-bold mb-4">Profile Picture (Emoji)</h3>
+            <div class="flex items-center gap-4">
+              <div class="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-primary-dim flex items-center justify-center text-3xl" id="currentAvatarEmoji">${currentUserData?.avatarEmoji || '👤'}</div>
+              <div>
+                <input type="text" id="emojiPicker" placeholder="Enter an emoji (e.g., 😎)" class="bg-surface-container-high p-2 rounded w-48">
+                <button id="saveAvatarBtn" class="bg-primary px-3 py-1 rounded ml-2">Save</button>
+              </div>
+            </div>
+          </div>
+          <div class="glass-panel p-6">
+            <h3 class="text-lg font-bold mb-4">Account</h3>
+            <div class="mb-4"><label class="block text-sm text-on-surface-variant mb-1">Change Username</label><input type="text" id="newUsername" class="w-full p-2 rounded bg-surface-container-high" placeholder="New username"></div>
+            <div class="mb-4"><label class="block text-sm text-on-surface-variant mb-1">Change Password</label><input type="password" id="newPassword" class="w-full p-2 rounded bg-surface-container-high" placeholder="New password (min 6 chars)"></div>
+            <button id="updateAccountBtn" class="bg-primary px-4 py-2 rounded-lg text-sm font-semibold mt-2">Update Account</button>
+          </div>
+          <div class="glass-panel p-6 border border-error/30">
+            <h3 class="text-lg font-bold text-error mb-4">Danger Zone</h3>
+            <p class="text-sm text-on-surface-variant mb-4">Once you delete your account, there is no going back. All your data will be permanently removed.</p>
+            <button id="deleteAccountBtn" class="bg-error/20 text-error px-4 py-2 rounded-lg hover:bg-error/30 transition">Delete Account</button>
+          </div>
+        </div>
+      `;
+      document.getElementById("saveAvatarBtn").onclick = async () => {
+        const newEmoji = document.getElementById("emojiPicker").value.trim();
+        if (newEmoji && newEmoji.match(/\p{Emoji}/u)) {
+          await updateDoc(doc(db, "users", auth.currentUser.uid), { avatarEmoji: newEmoji });
+          document.getElementById("currentAvatarEmoji").innerText = newEmoji;
+          document.getElementById("userAvatarEmoji").innerText = newEmoji;
+          currentUserData.avatarEmoji = newEmoji;
+        } else {
+          alert("Please enter a valid emoji");
+        }
+      };
+      document.getElementById("updateAccountBtn").onclick = async () => {
+        const newPass = document.getElementById("newPassword").value;
+        const newUsername = document.getElementById("newUsername").value.trim();
+        if (newPass && newPass.length >= 6) await updatePassword(auth.currentUser, newPass);
+        if (newUsername && !await usernameExists(newUsername)) {
+          await updateDoc(doc(db, "users", auth.currentUser.uid), { username: newUsername, normalizedUsername: normalizeUsername(newUsername) });
+          alert("Username updated. Please log in again with new username.");
+        } else if (newUsername) alert("Username already taken");
+        else alert("No changes or invalid input");
+      };
+      document.getElementById("deleteAccountBtn").onclick = async () => {
+        if (confirm("⚠️ Are you absolutely sure? This will permanently delete your account and all data.")) {
+          const uid = auth.currentUser.uid;
+          await deleteDoc(doc(db, "users", uid));
+          await deleteUser(auth.currentUser);
+          signOut(auth);
+        }
+      };
+    }
+
+    // --- Rules Page ---
+    function renderRulesView() {
+      mainContainer.innerHTML = `<h2 class="text-3xl font-bold mb-6">Tournament Rules</h2><div class="glass-panel p-6"><h3 class="font-bold">Football</h3><p>5v5, 2 halves of 20 mins, no offside. Fair play required.</p><h3 class="font-bold mt-4">Basketball</h3><p>3v3 half-court, first to 21 points.</p><h3 class="font-bold mt-4">Chess</h3><p>Classical 30+0, no engine assistance.</p><h3 class="font-bold mt-4">Balloon Ball</h3><p>Volleyball style with balloon, 4 players per team.</p></div>`;
+    }
+
+    // --- Events Page ---
+    async function renderEventsView() {
+      mainContainer.innerHTML = `<h2 class="text-3xl font-bold mb-6">Events & Season</h2><div class="glass-panel p-6"><h3 class="font-bold">Current Season: <span id="seasonDisplay">Loading...</span></h3><div id="specialLeaderboardEvents" class="mt-3"></div></div><div class="glass-panel p-6 mt-6"><h3 class="font-bold">Latest Hacker Message</h3><div class="flex items-center gap-3"><div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-2xl">👾</div><div><p id="hackerMessageText">No messages yet</p><span id="hackerMessageTime" class="text-xs text-gray-400"></span></div></div>${currentUserData?.role === 'hacker' ? `<textarea id="newHackerMessage" rows="2" class="w-full mt-3 p-2 rounded bg-surface-container-high"></textarea><button id="sendHackerMessageBtn" class="mt-2 bg-tertiary px-4 py-2 rounded">Send Message</button>` : ''}</div>`;
+      const seasonSnap = await getDoc(doc(db, "meta", "season"));
+      if (seasonSnap.exists()) document.getElementById("seasonDisplay").innerText = seasonSnap.data().name;
+      const specialSnap = await getDoc(doc(db, "meta", "specialLeaderboard"));
+      const specialData = specialSnap.exists() ? specialSnap.data().entries : [];
+      document.getElementById("specialLeaderboardEvents").innerHTML = "<h4>Special Event Rankings</h4>" + (specialData.length ? specialData.map((e,i)=>`${i+1}. ${e.name} - ${e.points}`).join("<br>") : "No special rankings.");
+      const msgQuery = query(collection(db, "hackerMessages"), orderBy("timestamp", "desc"), limit(1));
+      const msgSnap = await getDocs(msgQuery);
+      if (!msgSnap.empty) { const msg = msgSnap.docs[0].data(); document.getElementById("hackerMessageText").innerText = msg.message; document.getElementById("hackerMessageTime").innerText = msg.timestamp?.toDate().toLocaleString() || "Just now"; }
+      if (currentUserData?.role === "hacker") document.getElementById("sendHackerMessageBtn").onclick = async () => { const msg = document.getElementById("newHackerMessage").value; if(msg) await addDoc(collection(db, "hackerMessages"), { userId: auth.currentUser.uid, userName: currentUserData.username, message: msg, timestamp: serverTimestamp() }); };
+    }
+
+    // --- Hacker Controls ---
+    async function renderHackerControls() {
+      const container = document.getElementById("hackerControls");
+      if (!container) return;
+      container.innerHTML = `<input type="number" id="multiplierValue" step="0.1" min="1.1" max="2" placeholder="1.1-2" class="bg-surface-container-high p-2 rounded w-24"><select id="multiplierSport" class="bg-surface-container-high p-2 rounded"><option>Football</option><option>Basketball</option><option>Chess</option><option>Balloon Ball</option></select><button id="activateMultiplierBtn" class="bg-tertiary px-4 py-2 rounded">Activate (5h)</button>`;
+      document.getElementById("activateMultiplierBtn")?.addEventListener("click", async () => {
+        const factor = parseFloat(document.getElementById("multiplierValue").value);
+        if (isNaN(factor) || factor < 1.1 || factor > 2) return alert("Factor 1.1-2");
+        const userRef = doc(db, "users", auth.currentUser.uid);
+        const userSnap = await getDoc(userRef);
+        let used = userSnap.data().multiplierUsed || 0;
+        if (used >= 2) return alert("Used both multipliers");
+        await updateDoc(userRef, { multiplierUsed: used + 1, activeMultiplier: { factor, sport: document.getElementById("multiplierSport").value, expires: Timestamp.fromDate(new Date(Date.now() + 5*3600000)) } });
+        alert("Multiplier active");
+      });
+    }
+
+    // --- Host Flagging ---
+    async function loadUsersForFlagging() {
+      const select = document.getElementById("flagUserSelect");
+      if (!select) return;
+      const usersSnap = await getDocs(collection(db, "users"));
+      select.innerHTML = "<option value=''>Select user</option>";
+      usersSnap.forEach(docSnap => { if (docSnap.id !== auth.currentUser.uid) select.innerHTML += `<option value="${docSnap.id}">${docSnap.data().username}</option>`; });
+      document.getElementById("submitFlagBtn").onclick = async () => {
+        const reportedId = document.getElementById("flagUserSelect").value;
+        const reason = document.getElementById("flagReason").value;
+        if (!reportedId || !reason) return alert("Select user and reason");
+        const lastFlagRef = doc(db, "users", auth.currentUser.uid);
+        const lastSnap = await getDoc(lastFlagRef);
+        const lastFlag = lastSnap.data().lastFlagTime;
+        if (lastFlag && (Date.now() - lastFlag.toDate().getTime()) < 3600000) return alert("Only once per hour");
+        await addDoc(collection(db, "flags"), { reporterId: auth.currentUser.uid, reportedId, reason, timestamp: serverTimestamp() });
+        await updateDoc(lastFlagRef, { lastFlagTime: serverTimestamp() });
+        alert("Flag sent to admin");
+      };
+    }
+
+    // --- Patch Notes Badge ---
+    async function loadPatchNotesBadge() {
+      const snap = await getDoc(doc(db, "meta", "patchNotes"));
+      if (snap.exists()) {
+        const badge = document.getElementById("patchNotesBadgeContainer");
+        if (badge) { badge.style.display = "block"; document.getElementById("patchNotesBadgeBtn").onclick = () => alert("Patch Notes:\n" + snap.data().content); }
+      }
+    }
+
+    // --- View Switching ---
+    async function switchView(view) {
+      if (view === 'home') renderHomeView();
+      else if (view === 'leaderboard') await renderLeaderboardView();
+      else if (view === 'teams') await renderTeamsView();
+      else if (view === 'users') await renderUsersView();
+      else if (view === 'admin') await renderAdminView();
+      else if (view === 'settings') await renderSettingsView();
+      else if (view === 'rules') renderRulesView();
+      else if (view === 'events') await renderEventsView();
+    }
 
     // Auth UI
     document.getElementById("doLoginBtn").addEventListener("click", async () => {
       const username = document.getElementById("loginUsername").value.trim();
       const password = document.getElementById("loginPassword").value;
-      const errorDiv = document.getElementById("loginError");
-      try {
-        await loginWithUsername(username, password);
-        errorDiv.innerText = "";
-      } catch (err) {
-        errorDiv.innerText = err.message;
-      }
+      const errDiv = document.getElementById("loginError");
+      try { await loginWithUsername(username, password); errDiv.innerText = ""; } catch(e) { errDiv.innerText = "Invalid credentials"; }
     });
     document.getElementById("doSignupBtn").addEventListener("click", async () => {
       const username = document.getElementById("signupUsername").value.trim();
       const fullName = document.getElementById("signupName").value.trim();
-      const password = document.getElementById("signupPassword").value;
+      const pwd = document.getElementById("signupPassword").value;
       const confirm = document.getElementById("signupConfirmPassword").value;
-      const errorDiv = document.getElementById("signupError");
-      try {
-        if (!username || !fullName) throw new Error("Username and full name required");
-        await signUpWithUsername(username, fullName, password, confirm);
-        errorDiv.innerText = "";
-      } catch (err) {
-        errorDiv.innerText = err.message;
-      }
+      const errDiv = document.getElementById("signupError");
+      try { await signUpWithUsername(username, fullName, pwd, confirm); errDiv.innerText = ""; } catch(e) { errDiv.innerText = e.message; }
     });
     document.getElementById("logoutBtnMain").addEventListener("click", () => signOut(auth));
     document.getElementById("authLoginTabBtn").addEventListener("click", () => { document.getElementById("loginFormPanel").classList.remove("hidden"); document.getElementById("signupFormPanel").classList.add("hidden"); });
     document.getElementById("authSignupTabBtn").addEventListener("click", () => { document.getElementById("signupFormPanel").classList.remove("hidden"); document.getElementById("loginFormPanel").classList.add("hidden"); });
+    document.querySelectorAll(".sidebar-item[data-view]").forEach(el => el.addEventListener("click", (e) => { e.preventDefault(); switchView(el.getAttribute("data-view")); }));
 
-    // Auth state listener
+    // Auth State
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         await loadUserData(user.uid);
         document.getElementById("authScreen").classList.add("hidden");
         document.getElementById("mainApp").classList.remove("hidden");
-        showView("homeView");
+        await switchView('home');
         loadPatchNotesBadge();
-        renderLeaderboard("all");
       } else {
         document.getElementById("authScreen").classList.remove("hidden");
         document.getElementById("mainApp").classList.add("hidden");
